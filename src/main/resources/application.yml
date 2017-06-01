@@ -5,7 +5,7 @@ spring:
     password: root
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
-    show-sql: false
+    show-sql: true
 #    hibernate:
 #      ddl-auto: validate
 
@@ -23,7 +23,8 @@ sim:
   #间隔时间  为正整数  单位:秒  默认为1
   time: 1
   #模拟设备号  多个obd设备code用","隔开  如果需要所有已知设备号则用 ALL; 默认为ALL
-  obdCodes: INCAR000001,INCAR10001168643
+#  obdCodes: INCAR000001,INCAR10001168643
+  obdCodes: ALL
   #表中的历史数据天数  (注:按每个设备的最大的时间 往前推** 天的历史数据 如果需要全部 则写0 或者不写 )
   days: 7
 

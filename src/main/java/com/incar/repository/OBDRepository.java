@@ -19,5 +19,6 @@ public interface OBDRepository extends JpaRepository<ObdHistory, Integer> {
             "date_sub((SELECT MAX(ot.receiveDate) from t_obd_history ot where ot.obdCode = ?1),interval ?2 day)) ORDER BY receiveDate",nativeQuery = true)
     List<ObdHistory> findAllAndTime(String obdCode ,Integer intervalDays);
 
-//    void findAllDifferentCodes();
+    @Query(value = "select o.obdCode from t_obd_history o where (concat(?1)  is null or o.obdCode in (?1) ) group by o.obdCode ",nativeQuery = true)
+    List<String> findAllDifferentCodes(List<String> obdCodes);
 }

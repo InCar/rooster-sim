@@ -84,12 +84,6 @@ public class TcpClient {
     public static void init(){
         bootstrap = getBootstrap();
         channel = getChannel(ApplicationVariable.getObjectiveIP(),ApplicationVariable.getObjectivePort());
-//        if (bootstrap ==null ){
-//            throw new RuntimeException("TCP 连接失败");
-//        }
-//        if (channel == null ){
-//            throw new RuntimeException("TCP 连接失败");
-//        }
         if (bootstrap == null || channel == null ){
             logger.info("TCP4连接初始化失败");
         }else {
