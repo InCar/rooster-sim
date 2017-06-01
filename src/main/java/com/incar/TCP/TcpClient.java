@@ -1,7 +1,6 @@
 package com.incar.TCP;
 
 
-import com.incar.Application;
 import com.incar.util.ApplicationVariable;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -41,7 +40,7 @@ public class TcpClient {
                 pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
                 pipeline.addLast("decoder", new StringDecoder(CharsetUtil.UTF_8));
                 pipeline.addLast("encoder", new StringEncoder(CharsetUtil.UTF_8));
-//                pipeline.addLast("handler", new TcpClientHandler());
+                pipeline.addLast("handler", new TcpClientHandler());
             }
         });
         b.option(ChannelOption.SO_KEEPALIVE, true);
@@ -85,6 +84,16 @@ public class TcpClient {
     public static void init(){
         bootstrap = getBootstrap();
         channel = getChannel(ApplicationVariable.getObjectiveIP(),ApplicationVariable.getObjectivePort());
-        logger.info("TCP4连接初始化成功");
+//        if (bootstrap ==null ){
+//            throw new RuntimeException("TCP 连接失败");
+//        }
+//        if (channel == null ){
+//            throw new RuntimeException("TCP 连接失败");
+//        }
+        if (bootstrap == null || channel == null ){
+            logger.info("TCP4连接初始化失败");
+        }else {
+            logger.info("TCP4连接初始化成功");
+        }
     }
 }

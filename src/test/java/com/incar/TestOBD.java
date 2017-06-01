@@ -17,20 +17,14 @@ import java.util.List;
 @SpringBootTest(classes = Application.class)
 public class TestOBD {
 
-    @Autowired
-    OBDRepository obdRepository;
+//    @Autowired
+//    OBDRepository obdRepository;
 
     @Test
     public void queryOBD(){
 //        ObdHistory one = obdRepository.findOne(6);
-        Object obdHistories = obdRepository.findAllAndTime("INCAR000001", null);
-        System.out.println();
+//        Object obdHistories = obdRepository.findAllAndTime("INCAR000001", null);
+        System.out.println("启动成功");
     }
 
-
-    public static void main(String[] args) {
-        String str = "你好";
-        byte[] bytes = str.getBytes();
-        System.out.println(bytes);
-    }
 }

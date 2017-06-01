@@ -20,7 +20,6 @@ public class Application implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         new OBDRunParameter().init();
-        System.out.println("启动初始化");
     }
 
 

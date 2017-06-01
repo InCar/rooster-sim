@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/incar?characterEncoding=utf8
+    username: root
+    password: *
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+
+server:
+  port: 60001
+
+
+
+#模拟器初始化参数 --------------------------------
+sim:
+  #发送服务的地址 与端口  默认为127.0.0.1  60000端口
+  objective:
+    IP: 127.0.0.1
+    port: 60000
+  #间隔时间  为正整数  单位:秒  默认为1
+  time: 1
+  #模拟设备号  多个obd设备code用","隔开  如果需要所有已知设备号则用 ALL; 默认为ALL
+  obdCodes: INCAR000001,INCAR10001168643
+  #表中的历史数据天数  (注:按每个设备的最大的时间 往前推** 天的历史数据 如果需要全部 则写0 或者不写 )
+  days: 7
+

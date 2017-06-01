@@ -1,6 +1,5 @@
 package com.incar.util;
 
-import com.incar.Application;
 import com.incar.TCP.TcpClient;
 import com.incar.repository.OBDRepository;
 import org.apache.log4j.Logger;
