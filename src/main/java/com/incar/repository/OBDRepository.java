@@ -18,4 +18,6 @@ public interface OBDRepository extends JpaRepository<ObdHistory, Integer> {
             " and (?2 is null or o.receiveDate >= " +
             "date_sub((SELECT MAX(ot.receiveDate) from t_obd_history ot where ot.obdCode = ?1),interval ?2 day)) ORDER BY receiveDate",nativeQuery = true)
     List<ObdHistory> findAllAndTime(String obdCode ,Integer intervalDays);
+
+//    void findAllDifferentCodes();
 }
