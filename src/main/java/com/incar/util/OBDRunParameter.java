@@ -113,7 +113,6 @@ public class OBDRunParameter implements EnvironmentAware {
          String objectivePort = environment.getProperty("sim.objective.port");
          String obdCodes = environment.getProperty("sim.obdCodes");
         String circulationNum = environment.getProperty("sim.circulationNum");
-
         try{
             ApplicationVariable.setDays(Integer.valueOf(days));
             ApplicationVariable.setObdCodes(obdCodes);

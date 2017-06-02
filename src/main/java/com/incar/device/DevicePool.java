@@ -2,6 +2,7 @@ package com.incar.device;
 
 
 import com.incar.TCP.TcpClient;
+import com.incar.util.StringToHex;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -108,7 +109,7 @@ public class DevicePool extends Transmitter {
             //2.发送
             if (time >0){Thread.sleep(time*1000);}
             logger.info(deviceCode+":正在发送数据");
-            TcpClient.sendMsg(data);
+            TcpClient.sendMsg(StringToHex.getByteBuffer(data));
             //3.成功的话 则移除第一个数据  将数据添加到已发送数据中
             //不成功的话 则重新发送
             transferData();

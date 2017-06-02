@@ -1,7 +1,11 @@
 package com.incar.util;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.Arrays;
 import java.util.List;
+
+import static io.netty.buffer.Unpooled.buffer;
 
 /**
  * Created by zhouyongbo on 2017/6/1.
@@ -72,5 +76,84 @@ public class StrUtils {
         }
         return false;
     }
+
+
+    // 将字符串转换成二进制字符串，以空格相隔
+    public static String StrToBinstr(String str) {
+        char[] strChar = str.toCharArray();
+        String result = "";
+        for (int i = 0; i < strChar.length; i++) {
+            result += Integer.toBinaryString(strChar[i]) + " ";
+        }
+        return result;
+    }
+
+
+    public static String StrToStr(String str){
+        char[] chars = "0123456789ABCDEF".toCharArray();
+        StringBuilder sb = new StringBuilder("");
+        byte[] bs = str.getBytes();
+        int bit;
+        for (int i = 0; i < bs.length; i++) {
+            bit = (bs[i] & 0x0f0) >> 4;
+            sb.append(chars[bit]);
+            bit = bs[i] & 0x0f;
+            sb.append(chars[bit]);
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * 把16进制字符串转换成字节数组
+     * @param hex
+     * @return byte[]
+     */
+    public static byte[] hexStringToByte(String hex) {
+        int len = (hex.length() / 2);
+        byte[] result = new byte[len];
+        char[] achar = hex.toCharArray();
+        for (int i = 0; i < len; i++) {
+            int pos = i * 2;
+            result[i] = (byte) (toByte(achar[pos]) << 4 | toByte(achar[pos + 1]));
+        }
+        return result;
+    }
+
+    private static int toByte(char c) {
+        byte b = (byte) "0123456789ABCDEF".indexOf(c);
+        return b;
+    }
+
+    public static void main(String[] args) {
+//        byte b = Integer.valueOf("0", 16).byteValue();
+//        System.out.println(b);
+
+        String s = "0";
+//        byte b = Byte.parseByte(s, 16);
+        byte b =  Integer.valueOf("9D", 16).byteValue();
+        System.out.println(b);
+//        byte s1 = (byte) (0x0+s);
+//        System.out.println(s1);
+
+//        String s = "16 08 31 30 30";
+//        ByteBuf byteBuf = getByteBuf(s);
+//        System.out.println(byteBuf);
+    }
+
+    public static ByteBuf getByteBuf(String str){
+        //根据16进制字符串得到ByteBuf对象(netty)
+        ByteBuf bb=buffer(1024);
+
+        String[] command=str.split(" ");
+        byte[] abc=new byte[command.length];
+        for(int i=0;i<command.length;i++){
+            abc[i]=Integer.valueOf(command[i],16).byteValue();
+        }
+        bb.writeBytes(abc);
+        return bb;
+    }
+
+
 
 }
