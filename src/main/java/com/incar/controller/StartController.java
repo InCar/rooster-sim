@@ -1,13 +1,17 @@
 package com.incar.controller;
 
+import com.incar.device.DevicePool;
 import com.incar.entity.ObdHistory;
 import com.incar.repository.OBDRepository;
+import com.incar.util.ApplicationVariable;
 import com.incar.util.OBDRunParameter;
+import com.incar.util.StrUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +25,16 @@ public class StartController {
 
     @RequestMapping(name = "/start",method = RequestMethod.GET)
     public Object start(){
-        List<ObdHistory> allAndTime = obdRepository.findAllAndTime("INCAR000001", null);
-        return allAndTime;
+        List<DevicePool> devicePools = new ArrayList<DevicePool>();
+        List<String> obdCodes = StrUtils.splitSeparate(ApplicationVariable.getObdCodes(), ",");
+        for (String code:obdCodes){
+            List<String> allAndTimeByCodes = obdRepository.findAllAndTimeByCodes(code, ApplicationVariable.getDays());
+            DevicePool devicePool = new DevicePool(null,code,ApplicationVariable.getCirculationNum(),allAndTimeByCodes,ApplicationVariable.getTime());
+            devicePools.add(devicePool);
+        }
+        for ( DevicePool devicePool:devicePools){
+            new Thread(devicePool).start();
+        }
+        return "启动了"+obdCodes.size()+"模拟设备";
     }
 }
