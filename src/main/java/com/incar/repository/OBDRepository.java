@@ -22,7 +22,7 @@ public interface OBDRepository extends JpaRepository<ObdHistory, Integer> {
     @Query(value = "select o.obdCode from t_obd_history o where (concat(?1)  is null or o.obdCode in (?1) ) group by o.obdCode ",nativeQuery = true)
     List<String> findAllDifferentCodes(List<String> obdCodes);
 
-    @Query(value = "select o.obdCode from t_obd_history o " +
+    @Query(value = "select o.content from t_obd_history o " +
             "where o.obdCode = ?1 " +
             " and (?2 is null or o.receiveDate >= " +
             "date_sub((SELECT MAX(ot.receiveDate) from t_obd_history ot where ot.obdCode = ?1),interval ?2 day)) ORDER BY receiveDate",nativeQuery = true)
