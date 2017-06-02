@@ -14,7 +14,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        OBDRepository obdRepository = (OBDRepository)event.getApplicationContext().getBean(OBDRepository.class);
+        OBDRepository obdRepository = event.getApplicationContext().getBean(OBDRepository.class);
         new OBDRunParameter().init(obdRepository);
     }
 }

@@ -2,6 +2,7 @@ package com.incar.device;
 
 
 import com.incar.TCP.TcpClient;
+import com.incar.util.ApplicationVariable;
 import com.incar.util.StringToHex;
 import org.apache.log4j.Logger;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * Created by zhouyongbo on 2017/6/2.
  * 设备池
  */
-public class DevicePool extends Transmitter {
+public class DevicePool extends OBDTCPClient {
 
     private static final Logger logger = Logger.getLogger(DevicePool.class);
     /**
@@ -27,7 +28,7 @@ public class DevicePool extends Transmitter {
     /**
      * 需要循环的次数  小于0代表永久循环 0代表停止循环 ; 大于0代表需要循环的次数
      */
-    private Integer circulationNum;
+    private Integer circulationNum = ApplicationVariable.getCirculationNum();
 
     /**
      * 要发送的数据源
@@ -37,19 +38,22 @@ public class DevicePool extends Transmitter {
     /**
      * 超时时间
      */
-    private int time;
+    private int time =  ApplicationVariable.getTime();
 
     /**
      * 是否能继续发送  true为继续发送  false为停止发送
      */
     private boolean isSend;
 
-    public DevicePool(String deviceName, String deviceCode, Integer circulationNum, List<String> dataInfo,int time) {
+    /**
+     * 是否共享TCP连接
+     */
+    private boolean isShareTCP =  ApplicationVariable.getIsShareTCP();
+
+    public DevicePool(String deviceName, String deviceCode, List<String> dataInfo) {
         this.deviceName = deviceName;
         this.deviceCode = deviceCode;
-        this.circulationNum = circulationNum;
         this.dataInfo = dataInfo;
-        this.time = time;
         init();
     }
 
@@ -65,6 +69,9 @@ public class DevicePool extends Transmitter {
             isSend = false;
         }
         setSentInfo(new ArrayList<String>());
+        if (!isShareTCP){
+            tcpInit();
+        }
     }
     /**
      * 取数据的方法
@@ -88,6 +95,7 @@ public class DevicePool extends Transmitter {
         return dataInfo.get(0);
     }
 
+
     /**
      * 数据转移到已发送
      */
@@ -97,37 +105,36 @@ public class DevicePool extends Transmitter {
     }
 
     /**
-     * 发送数据
+     *启动
      */
-    public void sendData(){
-        //1.取数据
-        String data = fetchData();
-        if (data == null ){ //数据出现错误 则直接抛弃掉
-            return;
-        }
-        try {
-            //2.发送
-            if (time >0){Thread.sleep(time*1000);}
-            logger.info(deviceCode+":正在发送数据");
-            TcpClient.sendMsg(StringToHex.getByteBuffer(data));
-            //3.成功的话 则移除第一个数据  将数据添加到已发送数据中
-            //不成功的话 则重新发送
-            transferData();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return ;
+    public void start(){
+        new Thread(this).start();
     }
 
+    public Object getMsg() {
+        //1.取数据
+        String data = fetchData();
+        if (data == null || "".equals(data)){ //数据出现错误 则直接抛弃掉
+            return null;
+        }
+        byte[] byteBuffer = StringToHex.getByteBuffer(data);
 
-    @Override
-    public void execute() {
+        return byteBuffer;
+    }
+
+    public void execute() throws Exception {
         logger.info(deviceCode+":启动发送数据");
         while (true){
             if (isSend){
-                sendData();
-                //todo 发送信息
+                Object msg = getMsg();
+                if (time >0){Thread.sleep(time*1000);}
+                logger.info(deviceCode+":正在发送数据");
+                if (isShareTCP){
+                    TcpClient.sendMsg(msg);
+                }else {
+                    sendMsg(msg);
+                }
+                transferData();
             }
         }
     }
@@ -166,19 +173,4 @@ public class DevicePool extends Transmitter {
     }
 
 
-    public Integer getCirculationNum() {
-        return circulationNum;
-    }
-
-    public void setCirculationNum(Integer circulationNum) {
-        this.circulationNum = circulationNum;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    public void setTime(int time) {
-        this.time = time;
-    }
 }
