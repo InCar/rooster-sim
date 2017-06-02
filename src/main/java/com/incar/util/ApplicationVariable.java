@@ -34,6 +34,11 @@ public class ApplicationVariable {
      */
     private static Integer days;
 
+    /**
+     * 小于0代表永久循环 0代表停止循环 ; 大于0代表需要循环的次数
+     */
+    private static Integer circulationNum;
+
 
     public static Integer getTime() {
         return time;
@@ -73,5 +78,13 @@ public class ApplicationVariable {
 
     public static void setDays(Integer days) {
         ApplicationVariable.days = days;
+    }
+
+    public static Integer getCirculationNum() {
+        return circulationNum;
+    }
+
+    public static void setCirculationNum(Integer circulationNum) {
+        ApplicationVariable.circulationNum = circulationNum;
     }
 }

@@ -90,6 +90,16 @@ public class OBDRunParameter implements EnvironmentAware {
         }else {
             logger.info("数据设置校验完成");
         }
+
+        //轮循的次数
+        Integer circulationNum = ApplicationVariable.getCirculationNum();
+        if (circulationNum == null || days <0){
+            ApplicationVariable.setCirculationNum(-1);
+            logger.info("轮循次数默认值设置完成");
+        }else {
+            logger.info("轮循设置校验完成");
+        }
+
     }
 
     @Override
@@ -102,6 +112,7 @@ public class OBDRunParameter implements EnvironmentAware {
          String objectiveIP = environment.getProperty("sim.objective.IP");
          String objectivePort = environment.getProperty("sim.objective.port");
          String obdCodes = environment.getProperty("sim.obdCodes");
+        String circulationNum = environment.getProperty("sim.circulationNum");
 
         try{
             ApplicationVariable.setDays(Integer.valueOf(days));
@@ -109,6 +120,7 @@ public class OBDRunParameter implements EnvironmentAware {
             ApplicationVariable.setTime(Integer.valueOf(time));
             ApplicationVariable.setObjectiveIP(objectiveIP);
             ApplicationVariable.setObjectivePort(Integer.valueOf(objectivePort));
+            ApplicationVariable.setCirculationNum(Integer.valueOf(circulationNum));
         }catch (Exception e){
 
         }
