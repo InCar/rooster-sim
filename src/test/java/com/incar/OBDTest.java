@@ -28,8 +28,8 @@ public class OBDTest {
 
     @Test
     public void sendMsg() throws Exception {
-            String s = "AA";
-        TcpClient.sendMsg(s);
+//            String s = "AA";
+//        TcpClient.sendMsg(s);
     }
 
 
