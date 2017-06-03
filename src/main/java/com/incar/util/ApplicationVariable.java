@@ -39,6 +39,11 @@ public class ApplicationVariable {
      */
     private static Integer circulationNum;
 
+    /**
+     * 代表多设备是否共享一个TCP连接 only:共享 more不共享(每个设备都会有一个自己的TCP连接通道)  默认为only
+     */
+    private static Boolean isShareTCP;
+
 
     public static Integer getTime() {
         return time;
@@ -86,5 +91,13 @@ public class ApplicationVariable {
 
     public static void setCirculationNum(Integer circulationNum) {
         ApplicationVariable.circulationNum = circulationNum;
+    }
+
+    public static Boolean getIsShareTCP() {
+        return isShareTCP;
+    }
+
+    public static void setIsShareTCP(Boolean isShareTCP) {
+        ApplicationVariable.isShareTCP = isShareTCP;
     }
 }

@@ -29,11 +29,11 @@ public class StartController {
         List<String> obdCodes = StrUtils.splitSeparate(ApplicationVariable.getObdCodes(), ",");
         for (String code:obdCodes){
             List<String> allAndTimeByCodes = obdRepository.findAllAndTimeByCodes(code, ApplicationVariable.getDays());
-            DevicePool devicePool = new DevicePool(null,code,ApplicationVariable.getCirculationNum(),allAndTimeByCodes,ApplicationVariable.getTime());
+            DevicePool devicePool = new DevicePool(null,code,allAndTimeByCodes);
             devicePools.add(devicePool);
         }
         for ( DevicePool devicePool:devicePools){
-            new Thread(devicePool).start();
+            devicePool.start();
         }
         return "启动了"+obdCodes.size()+"模拟设备";
     }

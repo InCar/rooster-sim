@@ -100,6 +100,15 @@ public class OBDRunParameter implements EnvironmentAware {
             logger.info("轮循设置校验完成");
         }
 
+        Boolean isShareTCP = ApplicationVariable.getIsShareTCP();
+        if (isShareTCP == null ){
+            ApplicationVariable.setIsShareTCP(true);
+            logger.info("TCP连接方式默认值设置完成");
+        }else {
+            TcpClient.channel.close();
+            logger.info("TCP连接方式设置完成");
+        }
+
     }
 
     @Override
@@ -107,12 +116,14 @@ public class OBDRunParameter implements EnvironmentAware {
      * 启动获取配置的参数
      */
     public void setEnvironment(Environment environment) {
+
          String days = environment.getProperty("sim.days");
          String time = environment.getProperty("sim.time");
          String objectiveIP = environment.getProperty("sim.objective.IP");
          String objectivePort = environment.getProperty("sim.objective.port");
          String obdCodes = environment.getProperty("sim.obdCodes");
-        String circulationNum = environment.getProperty("sim.circulationNum");
+         String circulationNum = environment.getProperty("sim.circulationNum");
+         String isShareTCP = environment.getProperty("sim.isShareTCP");
         try{
             ApplicationVariable.setDays(Integer.valueOf(days));
             ApplicationVariable.setObdCodes(obdCodes);
@@ -120,6 +131,7 @@ public class OBDRunParameter implements EnvironmentAware {
             ApplicationVariable.setObjectiveIP(objectiveIP);
             ApplicationVariable.setObjectivePort(Integer.valueOf(objectivePort));
             ApplicationVariable.setCirculationNum(Integer.valueOf(circulationNum));
+            ApplicationVariable.setIsShareTCP(Boolean.valueOf(isShareTCP));
         }catch (Exception e){
 
         }
