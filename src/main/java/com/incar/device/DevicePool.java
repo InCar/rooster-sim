@@ -79,20 +79,25 @@ public class DevicePool extends OBDTCPClient {
     public String fetchData(){
         if (dataInfo.size() > 0){
             return dataInfo.get(0);
-        } if (dataInfo.size() <= 0 ){
-            if (circulationNum  < 0 || (circulationNum >0 && circulationNum<getIndex())){
+        }else if (dataInfo.size() <= 0 ){
+            if (circulationNum  < 0 || (circulationNum >=0 && getIndex()<circulationNum)){
                 if (getSentInfo() != null && getSentInfo().size() >0){
                     dataInfo = getSentInfo();
                     setSentInfo(new ArrayList<String>());
                     setIndex(getIndex()+1);
+                    logger.info("deviceCode:"+deviceCode+";数据轮循"+getIndex()+"次;");
+                    return dataInfo.get(0);
                 }else {
-                    logger.info("deviceCode:"+"deviceCode;出现数据错误;已停止发送");
+                    logger.info("deviceCode:"+deviceCode+";出现数据错误;已停止发送");
                     isSend = false;
                     return null;
                 }
+            }else {
+                isSend = false;
+                return null;
             }
         }
-        return dataInfo.get(0);
+        return null;
     }
 
 
@@ -123,20 +128,28 @@ public class DevicePool extends OBDTCPClient {
     }
 
     public void execute() throws Exception {
+        Long start = System.currentTimeMillis();
         logger.info(deviceCode+":启动发送数据");
-        while (true){
-            if (isSend){
+        while (isSend){
                 Object msg = getMsg();
                 if (time >0){Thread.sleep(time*1000);}
-                logger.info(deviceCode+":正在发送数据");
-                if (isShareTCP){
-                    TcpClient.sendMsg(msg);
-                }else {
-                    sendMsg(msg);
+//                logger.info(deviceCode+":正在发送数据");
+            if (msg!=null){
+                try{
+                    if (isShareTCP){
+                        TcpClient.sendMsg(msg);
+                    }else {
+                        sendMsg(msg);
+                    }
+                    transferData(); // 如果与主机断开连接等异常 则重发
+                }catch (Exception e){
+                    e.printStackTrace();
+                    logger.info("异常出来:"+"重发");
                 }
-                transferData();
             }
         }
+        logger.info(deviceCode+":数据发送完毕;"+"耗时:"+(System.currentTimeMillis() - start)/1000+"秒");
+        getChannel().close();
     }
 
 
