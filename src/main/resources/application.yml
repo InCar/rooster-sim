@@ -21,15 +21,15 @@ sim:
     IP: 127.0.0.1
     port: 60000
   #间隔时间  为正整数  单位:秒  默认为1
-  time: 2
+  time: 0
   #模拟设备号  多个obd设备code用","隔开  如果需要所有已知设备号则用 ALL; 默认为ALL
   #,INCAR10001168643
-  obdCodes: INCAR000001,INCAR10001168643
+  obdCodes: INCAR10001168643,INCAR000001
 #  obdCodes: ALL
   #表中的历史数据天数  (注:按每个设备的最大的时间 往前推** 天的历史数据 如果需要全部 则写0 或者不写 )
   days: 7
   #代表当所有的数据发送完毕 是否进行轮循 小于0代表永久循环 0代表停止循环 ; 大于0代表需要循环的次数  默认为-1
-  circulationNum: -1
+  circulationNum: 1
   #代表多设备是否共享一个TCP连接 true:共享 false:不共享(每个设备都会有一个自己的TCP连接通道)  默认为false
   isShareTCP: false
 

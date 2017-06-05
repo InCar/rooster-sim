@@ -32,9 +32,15 @@ public class StartController {
             DevicePool devicePool = new DevicePool(null,code,allAndTimeByCodes);
             devicePools.add(devicePool);
         }
+        int index = 0;
         for ( DevicePool devicePool:devicePools){
-            devicePool.start();
+            try{
+                devicePool.start();
+                index++;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
-        return "启动了"+obdCodes.size()+"模拟设备";
+        return "启动了"+index+"模拟设备";
     }
 }
