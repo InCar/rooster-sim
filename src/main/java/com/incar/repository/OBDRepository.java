@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,4 +28,9 @@ public interface OBDRepository extends JpaRepository<ObdHistory, Integer> {
             " and (?2 is null or o.receiveDate >= " +
             "date_sub((SELECT MAX(ot.receiveDate) from t_obd_history ot where ot.obdCode = ?1),interval ?2 day)) ORDER BY receiveDate",nativeQuery = true)
     List<String> findAllAndTimeByCodes(String obdCode ,Integer intervalDays);
+
+    @Query(value = "select o.content from t_obd_history o " +
+            " where  o.obdCode = ?1 " +
+            " and (?2 <= o.receiveDate and ?3 >= o.receiveDate )",nativeQuery = true)
+    List<String> findAllTimeSlot(String codes, Date startTime, Date endTime);
 }

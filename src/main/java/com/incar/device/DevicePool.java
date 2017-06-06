@@ -50,10 +50,9 @@ public class DevicePool extends OBDTCPClient {
      */
     private boolean isShareTCP =  ApplicationVariable.getIsShareTCP();
 
-    public DevicePool(String deviceName, String deviceCode, List<String> dataInfo) {
+    public DevicePool(String deviceName, String deviceCode) {
         this.deviceName = deviceName;
         this.deviceCode = deviceCode;
-        this.dataInfo = dataInfo;
         init();
     }
 
@@ -62,16 +61,24 @@ public class DevicePool extends OBDTCPClient {
      */
     public void init(){
         isSend = true;
+        //初始化数据
+        dataInfo =  new DataService().getData(deviceCode);
         if (dataInfo== null || dataInfo.size() == 0){
+            logger.info("code:"+deviceCode+";无数据");
             isSend = false;
+            return;
         }
         if (circulationNum == null || circulationNum == 0){
             isSend = false;
+            return;
         }
         setSentInfo(new ArrayList<String>());
         if (!isShareTCP){
             tcpInit();
+        }else {
+            setNormal(ApplicationVariable.getStartTheReady());
         }
+
     }
     /**
      * 取数据的方法
@@ -111,9 +118,16 @@ public class DevicePool extends OBDTCPClient {
 
     /**
      *启动
+     * 0:启动成功
+     * 1:启动失败
      */
-    public void start(){
-        new Thread(this).start();
+    public int start(){
+        if (isNormal()){
+            new Thread(this).start();
+            return 0;
+        }else {
+            return 1;
+        }
     }
 
     public Object getMsg() {
@@ -127,15 +141,20 @@ public class DevicePool extends OBDTCPClient {
         return byteBuffer;
     }
 
-    public void execute() throws Exception {
+    public void execute() {
         Long start = System.currentTimeMillis();
         logger.info(deviceCode+":启动发送数据");
         while (isSend){
                 Object msg = getMsg();
-                if (time >0){Thread.sleep(time*1000);}
+
 //                logger.info(deviceCode+":正在发送数据");
             if (msg!=null){
                 try{
+                    if (time >0){Thread.sleep(time*1000);}
+                    if ("INCAR10001168643".equals(deviceCode)){
+                        logger.debug("code:"+deviceCode+";正在发送数据");
+                    }
+//                    logger.info("code:"+deviceCode+";正在发送数据");
                     if (isShareTCP){
                         TcpClient.sendMsg(msg);
                     }else {
@@ -144,12 +163,14 @@ public class DevicePool extends OBDTCPClient {
                     transferData(); // 如果与主机断开连接等异常 则重发
                 }catch (Exception e){
                     e.printStackTrace();
-                    logger.info("异常出来:"+"重发");
+                    logger.info("异常状况:"+"重发");
                 }
             }
         }
         logger.info(deviceCode+":数据发送完毕;"+"耗时:"+(System.currentTimeMillis() - start)/1000+"秒");
-        getChannel().close();
+//        if (getChannel() == null) {
+//            getChannel().close();
+//        }
     }
 
 
