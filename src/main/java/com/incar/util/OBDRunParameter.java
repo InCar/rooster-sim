@@ -21,17 +21,14 @@ public class OBDRunParameter implements EnvironmentAware {
 
     private static OBDRepository obdRepository;
 
+    //是否初始化过参数
+    private static boolean initParent = false;
+
     public OBDRunParameter() {
     }
 
     public void init(OBDRepository obdRepository){
         this.obdRepository = obdRepository;
-        //校验 启动参数
-        logger.info("启动参数校验");
-        initTCP();
-    }
-
-    public void init(){
         //校验 启动参数
         logger.info("启动参数校验");
         initTCP();
@@ -57,7 +54,10 @@ public class OBDRunParameter implements EnvironmentAware {
     public void returnTCP(){
         logger.info("TCP连接成功");
         logger.info("TCP:objectiveIP-"+ ApplicationVariable.getObjectiveIP()+ ";objectivePort-"+ApplicationVariable.getObjectivePort());
-        initOBDCodes();
+        if (!initParent){
+            initParent = true;
+            initOBDCodes();
+        }
     }
 
     /**

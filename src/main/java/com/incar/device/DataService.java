@@ -29,7 +29,6 @@ public class DataService implements ApplicationListener<ContextRefreshedEvent> {
      * @return
      */
     public List<String> getData(String codes){
-        ApplicationVariable applicationVariable = new ApplicationVariable();
         if (ApplicationVariable.getDataType() == 1){
            return obdRepository.findAllAndTimeByCodes(codes,ApplicationVariable.getDays());
         }else {

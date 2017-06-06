@@ -16,6 +16,8 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 import org.apache.log4j.Logger;
 
+import java.net.InetSocketAddress;
+
 
 /**
  * Created by zhouyongbo on 2017/5/31.
@@ -25,6 +27,7 @@ public class TcpClient {
 
     public static Bootstrap bootstrap = null;
     public static Channel channel = null;
+    public static int port;
     /**
      * 初始化Bootstrap
      * @return
@@ -54,9 +57,13 @@ public class TcpClient {
     }
 
     public static final Channel getChannel(){
+        if (channel != null  && channel.isOpen()  ){
+            return channel;
+        }
         Channel channel = null;
         try {
             channel = getBootstrap().connect(ApplicationVariable.getObjectiveIP(),ApplicationVariable.getObjectivePort()).sync().channel();
+            port= ((InetSocketAddress) channel.localAddress()).getPort();
         } catch (Exception e) {
             logger.error(String.format("连接Server(IP[%s],PORT[%s])失败",ApplicationVariable.getObjectiveIP(),ApplicationVariable.getObjectivePort()),e);
             return null;
@@ -65,7 +72,7 @@ public class TcpClient {
     }
 
     public static void sendMsg(Object msg) throws Exception {
-        if (!channel.isOpen()){
+        if (channel == null || !channel.isOpen() ){
             channel = getChannel();
         }
         if(channel!=null){

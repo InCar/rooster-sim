@@ -38,6 +38,9 @@ public class StartController {
         if (isRun){
             return "设备已经启动;无法重新启动,请重新初始化再进行启动";
         }
+        if (!ApplicationVariable.getStartTheReady()){
+            return "初始化失败;请仔细检查参数";
+        }
         List<String> obdCodes = StrUtils.splitSeparate(ApplicationVariable.getObdCodes(), ",");
         index = 0;
         for (String code:obdCodes){

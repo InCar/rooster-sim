@@ -12,30 +12,7 @@ import java.util.List;
  */
 public abstract class Transmitter {
     private static final Logger logger = Logger.getLogger(Transmitter.class);
-    /**
-     * 已发送信息
-     */
-    private List<String> sentInfo;
-
-    /**
-     * 轮循的次数
-     */
-    private int index = 0;
 
 
-    public List<String> getSentInfo() {
-        return sentInfo;
-    }
 
-    public void setSentInfo(List<String> sentInfo) {
-        this.sentInfo = sentInfo;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
 }
