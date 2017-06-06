@@ -1,8 +1,7 @@
 package com.incar.device;
 
-import com.incar.TCP.TcpClient;
-import com.incar.util.StringToHex;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -11,7 +10,7 @@ import java.util.List;
  * 发送器
  */
 public abstract class Transmitter {
-    private static final Logger logger = Logger.getLogger(Transmitter.class);
+    private static final Logger logger = LoggerFactory.getLogger(Transmitter.class);
     /**
      * 已发送信息
      */

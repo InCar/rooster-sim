@@ -7,13 +7,14 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by zhouyongbo on 2017/6/2.
  */
 public abstract class OBDTCPClient extends Transmitter implements Runnable{
-    private static final Logger logger = Logger.getLogger(OBDTCPClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(OBDTCPClient.class);
 
     private  Bootstrap bootstrap ;
     private  Channel channel ;

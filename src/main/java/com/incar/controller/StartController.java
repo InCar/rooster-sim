@@ -1,18 +1,16 @@
 package com.incar.controller;
 
 import com.incar.device.DevicePool;
-import com.incar.entity.ObdHistory;
-import com.incar.repository.OBDRepository;
 import com.incar.util.ApplicationVariable;
 import com.incar.util.OBDRunParameter;
 import com.incar.util.StrUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +19,7 @@ import java.util.List;
 @RestController
 public class StartController {
 
-    private static final Logger logger = Logger.getLogger(StartController.class);
+    private static final Logger logger = LoggerFactory.getLogger(StartController.class);
     private static int index = 0;
 
 

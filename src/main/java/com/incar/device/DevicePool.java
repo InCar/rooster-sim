@@ -4,7 +4,8 @@ package com.incar.device;
 import com.incar.TCP.TcpClient;
 import com.incar.util.ApplicationVariable;
 import com.incar.util.StringToHex;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class DevicePool extends OBDTCPClient {
 
-    private static final Logger logger = Logger.getLogger(DevicePool.class);
+    private static final Logger logger = LoggerFactory.getLogger(DevicePool.class);
     /**
      * 设备名称
      */
@@ -64,7 +65,7 @@ public class DevicePool extends OBDTCPClient {
         //初始化数据
         dataInfo =  new DataService().getData(deviceCode);
         if (dataInfo== null || dataInfo.size() == 0){
-            logger.info("code:"+deviceCode+";无数据");
+            logger.info("code: {} 无数据", deviceCode);
             isSend = false;
             return;
         }
@@ -92,10 +93,10 @@ public class DevicePool extends OBDTCPClient {
                     dataInfo = getSentInfo();
                     setSentInfo(new ArrayList<String>());
                     setIndex(getIndex()+1);
-                    logger.info("deviceCode:"+deviceCode+";数据轮循"+getIndex()+"次;");
+                    logger.info("devicdCode: {} 数据轮循{}次", deviceCode, getIndex());
                     return dataInfo.get(0);
                 }else {
-                    logger.info("deviceCode:"+deviceCode+";出现数据错误;已停止发送");
+                    logger.info("deviceCode: {} 出现数据错误;已停止发送", deviceCode);
                     isSend = false;
                     return null;
                 }
