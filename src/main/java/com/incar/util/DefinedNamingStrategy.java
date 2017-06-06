@@ -2,7 +2,6 @@ package com.incar.util;
 
 import org.hibernate.annotations.common.util.StringHelper;
 import org.hibernate.cfg.ImprovedNamingStrategy;
-import org.hibernate.cfg.NamingStrategy;
 
 import java.io.Serializable;
 

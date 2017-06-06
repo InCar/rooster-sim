@@ -21,8 +21,7 @@ repositories {
 }
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'spring-boot'
-
+apply plugin: 'org.springframework.boot'
 
 jar {
     baseName = 'simulator'
@@ -39,5 +38,15 @@ dependencies {
     runtime("mysql:mysql-connector-java:5.+")
     compile("org.springframework.boot:spring-boot-starter-web")
     testCompile('org.springframework.boot:spring-boot-starter-test')
-
 }
+
+compileJava{
+    options.encoding = "utf-8"
+    options.compilerArgs << "-Xlint:unchecked"
+}
+
+bootRun{
+    systemProperties System.getProperties()
+}
+
+defaultTasks "assemble"
