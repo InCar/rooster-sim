@@ -2,11 +2,13 @@ package com.incar.util;
 
 import com.incar.TCP.TcpClient;
 import com.incar.repository.OBDRepository;
+import com.sun.glass.ui.Application;
 import org.apache.log4j.Logger;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,6 +26,12 @@ public class OBDRunParameter implements EnvironmentAware {
 
     public void init(OBDRepository obdRepository){
         this.obdRepository = obdRepository;
+        //校验 启动参数
+        logger.info("启动参数校验");
+        initTCP();
+    }
+
+    public void init(){
         //校验 启动参数
         logger.info("启动参数校验");
         initTCP();
@@ -65,12 +73,61 @@ public class OBDRunParameter implements EnvironmentAware {
         List<String> allDifferentCodes = obdRepository.findAllDifferentCodes(strings);
         String join = StrUtils.join(allDifferentCodes, ",");
         if (StrUtils.checkNull(join)){
+            ApplicationVariable.setStartTheReady(false);
             logger.info("没有可用设备");
         }else {
             ApplicationVariable.setObdCodes(join);
             logger.info("模拟设备初始化完成");
         }
+        initDate();
         otherParameter();
+    }
+
+    private void initDate(){
+        logger.info("初始化时间段");
+        Integer defaultDay = 7; //默认天数
+        //数据
+        Integer days = ApplicationVariable.getDays();
+        if (days == null || days == 0){
+            ApplicationVariable.setDays(null);
+            logger.info("数据默认值设置完成");
+        }else {
+            logger.info("数据设置校验完成");
+        }
+        Date startTime = ApplicationVariable.getStartTime();
+        Date endTime = ApplicationVariable.getEndTime();
+        //默认设置为2
+        ApplicationVariable.setDataType(2);
+        //设置时间段情况
+        if (startTime != null && endTime!= null ){
+            if (endTime.getTime()>startTime.getTime()){
+                return;
+            }else {
+                ApplicationVariable.setStartTime(endTime);
+                ApplicationVariable.setEndTime(startTime);
+                return;
+            }
+        }
+        //只设置days的情况
+        if (startTime == null &&  endTime == null){
+            ApplicationVariable.setDataType(1);
+             return;
+        }
+        //设置days 或者设置了一个时间的情况
+        if (startTime == null && endTime !=null){
+           if (days == null )ApplicationVariable.setDays(defaultDay);
+            startTime = new Date(endTime.getTime() - ApplicationVariable.getDays()* 24 * 3600 * 1000L);
+            ApplicationVariable.setStartTime(startTime);
+            return;
+        }
+
+        if (startTime != null && endTime == null ){
+            if (days == null )   ApplicationVariable.setDays(defaultDay);
+            endTime = new Date(startTime.getTime() + ApplicationVariable.getDays()*24 *3600 * 1000L);
+            ApplicationVariable.setEndTime(endTime);
+            return;
+        }
+
     }
 
     private void otherParameter(){
@@ -82,18 +139,10 @@ public class OBDRunParameter implements EnvironmentAware {
         }else {
             logger.info("间隔时间校验完成");
         }
-        //数据
-        Integer days = ApplicationVariable.getDays();
-        if (days == null || days == 0){
-            ApplicationVariable.setDays(null);
-            logger.info("数据默认值设置完成");
-        }else {
-            logger.info("数据设置校验完成");
-        }
 
         //轮循的次数
         Integer circulationNum = ApplicationVariable.getCirculationNum();
-        if (circulationNum == null || days <0){
+        if (circulationNum == null || circulationNum <0){
             ApplicationVariable.setCirculationNum(-1);
             logger.info("轮循次数默认值设置完成");
         }else {
@@ -104,10 +153,13 @@ public class OBDRunParameter implements EnvironmentAware {
         if (isShareTCP == null ){
             ApplicationVariable.setIsShareTCP(true);
             logger.info("TCP连接方式默认值设置完成");
-        }else {
+        }else if (!isShareTCP){
             TcpClient.channel.close();
             logger.info("TCP连接方式设置完成");
         }
+
+        ApplicationVariable.setIsRun(false);
+        ApplicationVariable.setStartTheReady(true);
 
     }
 
@@ -124,6 +176,8 @@ public class OBDRunParameter implements EnvironmentAware {
          String obdCodes = environment.getProperty("sim.obdCodes");
          String circulationNum = environment.getProperty("sim.circulationNum");
          String isShareTCP = environment.getProperty("sim.isShareTCP");
+         String startTime = environment.getProperty("sim.startTime");
+         String endTime =  environment.getProperty("sim.endTime");
         try{
             ApplicationVariable.setDays(Integer.valueOf(days));
             ApplicationVariable.setObdCodes(obdCodes);
@@ -132,6 +186,8 @@ public class OBDRunParameter implements EnvironmentAware {
             ApplicationVariable.setObjectivePort(Integer.valueOf(objectivePort));
             ApplicationVariable.setCirculationNum(Integer.valueOf(circulationNum));
             ApplicationVariable.setIsShareTCP(Boolean.valueOf(isShareTCP));
+            ApplicationVariable.setStartTime(DateUtils.parseStrToDate(startTime));
+            ApplicationVariable.setEndTime(DateUtils.parseStrToDate(endTime));
         }catch (Exception e){
 
         }

@@ -18,11 +18,26 @@ public abstract class OBDTCPClient extends Transmitter implements Runnable{
     private  Bootstrap bootstrap ;
     private  Channel channel ;
 
+
+    private boolean isNormal = false;
+
+
+    public boolean isNormal() {
+        return isNormal;
+    }
+
+    public void setNormal(boolean normal) {
+        isNormal = normal;
+    }
+
     /**
      * 初始化Bootstrap
      * @return
      */
     public Bootstrap initBootstrap(){
+        if (bootstrap != null ){
+            return bootstrap;
+        }
         EventLoopGroup group = new NioEventLoopGroup();
         Bootstrap b = new Bootstrap();
         b.group(group).channel(NioSocketChannel.class);
@@ -61,9 +76,12 @@ public abstract class OBDTCPClient extends Transmitter implements Runnable{
     }
 
     public Channel getChannel(String host,int port){
+        if (this.channel != null ){
+            return channel;
+        }
         Channel channel = null;
         try {
-            channel = bootstrap.connect(host, port).sync().channel();
+            channel = initBootstrap().connect(host, port).sync().channel();
         } catch (Exception e) {
             logger.error(String.format("连接Server(IP[%s],PORT[%s])失败", host,port),e);
             return null;
@@ -72,6 +90,9 @@ public abstract class OBDTCPClient extends Transmitter implements Runnable{
     }
 
     protected void sendMsg(Object msg){
+        if (channel == null || !channel.isOpen() ){
+            channel = getChannel();
+        }
         if(channel!=null){
             try {
                 channel.writeAndFlush(msg).sync();
@@ -84,26 +105,24 @@ public abstract class OBDTCPClient extends Transmitter implements Runnable{
     }
 
     public void run() {
-        try {
             execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 
     /**
      * 获取执行数据
      */
-    public abstract void execute() throws Exception;
+    public abstract void execute();
 
     protected void tcpInit(){
         bootstrap = initBootstrap();
         channel = getChannel(ApplicationVariable.getObjectiveIP(),ApplicationVariable.getObjectivePort());
         if (bootstrap == null || channel == null ){
             logger.info("TCP4连接初始化失败");
+            isNormal = false;
         }else {
             logger.info("TCP4连接初始化成功");
+            isNormal = true;
         }
     }
 

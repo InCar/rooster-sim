@@ -6,6 +6,7 @@ import com.incar.repository.OBDRepository;
 import com.incar.util.ApplicationVariable;
 import com.incar.util.OBDRunParameter;
 import com.incar.util.StrUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,27 +21,39 @@ import java.util.List;
 @RestController
 public class StartController {
 
+    private static final Logger logger = Logger.getLogger(StartController.class);
+    private static int index = 0;
+
+
+    private OBDRunParameter obdRunParameter;
+//
     @Autowired
-    OBDRepository obdRepository;
+    public void setObdRunParameter(OBDRunParameter obdRunParameter) {
+        this.obdRunParameter = obdRunParameter;
+    }
 
     @RequestMapping(name = "/start",method = RequestMethod.GET)
     public Object start(){
-        List<DevicePool> devicePools = new ArrayList<DevicePool>();
-        List<String> obdCodes = StrUtils.splitSeparate(ApplicationVariable.getObdCodes(), ",");
-        for (String code:obdCodes){
-            List<String> allAndTimeByCodes = obdRepository.findAllAndTimeByCodes(code, ApplicationVariable.getDays());
-            DevicePool devicePool = new DevicePool(null,code,allAndTimeByCodes);
-            devicePools.add(devicePool);
+        boolean isRun = ApplicationVariable.getIsRun();
+        if (isRun){
+            return "设备已经启动;无法重新启动,请重新初始化再进行启动";
         }
-        int index = 0;
-        for ( DevicePool devicePool:devicePools){
-            try{
-                devicePool.start();
-                index++;
-            }catch (Exception e){
-                e.printStackTrace();
+        List<String> obdCodes = StrUtils.splitSeparate(ApplicationVariable.getObdCodes(), ",");
+        index = 0;
+        for (String code:obdCodes){
+            int start = new DevicePool(null, code).start();
+            if (start == 0){
+                index ++;
+            }else {
+                logger.error("codes:"+code+";启动失败");
             }
         }
-        return "启动了"+index+"模拟设备";
+        return "成功启动了"+index+ "个模拟设备;";
     }
+
+//    @RequestMapping(name = "/parameterInit",method = RequestMethod.GET)
+//    public Object parameter(){
+//        obdRunParameter.init();
+//        return "正在进行参数初始化";
+//    }
 }
