@@ -17,6 +17,16 @@ import java.util.List;
 public class DevicePool extends OBDTCPClient {
 
     private static final Logger logger = LoggerFactory.getLogger(DevicePool.class);
+
+    /**
+     * 已发送信息
+     */
+    private List<String> sentInfo;
+
+    /**
+     * 轮循的次数
+     */
+    private int index = 1;
     /**
      * 设备名称
      */
@@ -63,21 +73,23 @@ public class DevicePool extends OBDTCPClient {
     public void init(){
         isSend = true;
         //初始化数据
-        dataInfo =  new DataService().getData(deviceCode);
+        if (dataInfo == null )dataInfo =  new DataService().getData(deviceCode);
         if (dataInfo== null || dataInfo.size() == 0){
-            logger.info("code: {} 无数据", deviceCode);
+            logger.info("code:"+deviceCode+";无数据");
             isSend = false;
             return;
         }
+
         if (circulationNum == null || circulationNum == 0){
             isSend = false;
             return;
         }
-        setSentInfo(new ArrayList<String>());
+        if (getSentInfo()==null) setSentInfo(new ArrayList<String>());
         if (!isShareTCP){
             tcpInit();
         }else {
             setNormal(ApplicationVariable.getStartTheReady());
+            setPort(TcpClient.port);
         }
 
     }
@@ -88,18 +100,22 @@ public class DevicePool extends OBDTCPClient {
         if (dataInfo.size() > 0){
             return dataInfo.get(0);
         }else if (dataInfo.size() <= 0 ){
-            if (circulationNum  < 0 || (circulationNum >=0 && getIndex()<circulationNum)){
-                if (getSentInfo() != null && getSentInfo().size() >0){
-                    dataInfo = getSentInfo();
-                    setSentInfo(new ArrayList<String>());
-                    setIndex(getIndex()+1);
-                    logger.info("devicdCode: {} 数据轮循{}次", deviceCode, getIndex());
+            if (circulationNum  <= 0 || (circulationNum >0 && index<circulationNum)){
+                if (sentInfo != null && sentInfo.size() >0){
+                    dataInfo = sentInfo;
+                    sentInfo = new ArrayList<String>();
+                    index ++;
+                    logger.info("deviceCode:"+deviceCode+";数据已发送"+index+"次;");
                     return dataInfo.get(0);
                 }else {
-                    logger.info("deviceCode: {} 出现数据错误;已停止发送", deviceCode);
+                    logger.info("deviceCode:"+deviceCode+";出现数据错误;已停止发送");
                     isSend = false;
                     return null;
                 }
+            }else if (index == circulationNum){
+                logger.info("deviceCode:"+deviceCode+";数据发送完毕;");
+                isSend = false;
+                return null;
             }else {
                 isSend = false;
                 return null;
@@ -127,6 +143,7 @@ public class DevicePool extends OBDTCPClient {
             new Thread(this).start();
             return 0;
         }else {
+            logger.error("deviceCode:"+deviceCode+";参数校验失败;无法启动该模拟器");
             return 1;
         }
     }
@@ -143,35 +160,46 @@ public class DevicePool extends OBDTCPClient {
     }
 
     public void execute() {
-        Long start = System.currentTimeMillis();
         logger.info(deviceCode+":启动发送数据");
-        while (isSend){
+        int retriesNumber = 0;
+        while (true){
+            if (isSend){
                 Object msg = getMsg();
-
 //                logger.info(deviceCode+":正在发送数据");
-            if (msg!=null){
-                try{
-                    if (time >0){Thread.sleep(time*1000);}
-                    if ("INCAR10001168643".equals(deviceCode)){
-                        logger.debug("code:"+deviceCode+";正在发送数据");
-                    }
+                if (msg!=null){
+                    try{
+                        if (time >0){Thread.sleep(time*1000);}
+                        logger.info("code:"+deviceCode+";port:"+getPort()+";正在发送数据");
 //                    logger.info("code:"+deviceCode+";正在发送数据");
-                    if (isShareTCP){
-                        TcpClient.sendMsg(msg);
-                    }else {
-                        sendMsg(msg);
+                        if (isShareTCP){
+                            TcpClient.sendMsg(msg);
+                        }else {
+                            sendMsg(msg);
+                        }
+                        retriesNumber = 0;
+                        transferData(); // 如果与主机断开连接等异常 则重发
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        retriesNumber ++ ;
+                        //连续3次异常之后 停止
+                        if (retriesNumber>= 3){
+                            isSend = false;
+                            logger.info("发包异常:"+"第"+retriesNumber+"次;终止重发;" );
+                        }else {
+                            logger.info("发包异常:"+"第"+retriesNumber+"次" );
+                        }
+                        //2秒之后重试
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+
                     }
-                    transferData(); // 如果与主机断开连接等异常 则重发
-                }catch (Exception e){
-                    e.printStackTrace();
-                    logger.info("异常状况:"+"重发");
                 }
             }
+
         }
-        logger.info(deviceCode+":数据发送完毕;"+"耗时:"+(System.currentTimeMillis() - start)/1000+"秒");
-//        if (getChannel() == null) {
-//            getChannel().close();
-//        }
     }
 
 
@@ -208,4 +236,19 @@ public class DevicePool extends OBDTCPClient {
     }
 
 
+    public List<String> getSentInfo() {
+        return sentInfo;
+    }
+
+    public void setSentInfo(List<String> sentInfo) {
+        this.sentInfo = sentInfo;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
 }

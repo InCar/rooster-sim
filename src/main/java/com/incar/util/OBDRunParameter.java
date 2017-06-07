@@ -1,6 +1,7 @@
 package com.incar.util;
 
 import com.incar.TCP.TcpClient;
+import com.incar.gradleTask.TaskUtil;
 import com.incar.repository.OBDRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,17 +22,20 @@ public class OBDRunParameter implements EnvironmentAware {
 
     private static OBDRepository obdRepository;
 
+    //是否初始化过参数
+    private static boolean initParent = false;
+
     public OBDRunParameter() {
     }
 
-    public void init(OBDRepository obdRepository){
-        this.obdRepository = obdRepository;
+    public void init(){
         //校验 启动参数
         logger.info("启动参数校验");
         initTCP();
     }
 
-    public void init(){
+    public void init(OBDRepository obdRepository){
+        this.obdRepository = obdRepository;
         //校验 启动参数
         logger.info("启动参数校验");
         initTCP();
@@ -57,7 +61,10 @@ public class OBDRunParameter implements EnvironmentAware {
     public void returnTCP(){
         logger.info("TCP连接成功");
         logger.info("TCP:objectiveIP-"+ ApplicationVariable.getObjectiveIP()+ ";objectivePort-"+ApplicationVariable.getObjectivePort());
-        initOBDCodes();
+        if (!initParent){
+            initParent = true;
+            initOBDCodes();
+        }
     }
 
     /**
@@ -81,6 +88,9 @@ public class OBDRunParameter implements EnvironmentAware {
         }
         initDate();
         otherParameter();
+        if (ApplicationVariable.getIsRunSend()){
+            TaskUtil.RootStartObd();
+        }
     }
 
     private void initDate(){
@@ -161,6 +171,11 @@ public class OBDRunParameter implements EnvironmentAware {
         ApplicationVariable.setIsRun(false);
         ApplicationVariable.setStartTheReady(true);
 
+        Boolean isRunSend = ApplicationVariable.getIsRunSend();
+        if (isRunSend == null){
+            ApplicationVariable.setIsRunSend(true);
+        }
+
     }
 
     @Override
@@ -178,6 +193,8 @@ public class OBDRunParameter implements EnvironmentAware {
          String isShareTCP = environment.getProperty("sim.isShareTCP");
          String startTime = environment.getProperty("sim.startTime");
          String endTime =  environment.getProperty("sim.endTime");
+        String serverPort =  environment.getProperty("server.port");
+        String isRunSend = environment.getProperty("sim.isRunSend");
         try{
             ApplicationVariable.setDays(Integer.valueOf(days));
             ApplicationVariable.setObdCodes(obdCodes);
@@ -188,6 +205,8 @@ public class OBDRunParameter implements EnvironmentAware {
             ApplicationVariable.setIsShareTCP(Boolean.valueOf(isShareTCP));
             ApplicationVariable.setStartTime(DateUtils.parseStrToDate(startTime));
             ApplicationVariable.setEndTime(DateUtils.parseStrToDate(endTime));
+            ApplicationVariable.setServerPort(Integer.parseInt(serverPort));
+            ApplicationVariable.setIsRunSend(Boolean.valueOf(isRunSend));
         }catch (Exception e){
 
         }

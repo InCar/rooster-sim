@@ -1,15 +1,13 @@
 package com.incar.controller;
 
 import com.incar.device.DevicePool;
+import com.incar.entity.Result;
 import com.incar.util.ApplicationVariable;
 import com.incar.util.OBDRunParameter;
 import com.incar.util.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,24 +15,21 @@ import java.util.List;
  * Created by zhouyongbo on 2017/5/31.
  */
 @RestController
+//@RequestMapping("/api")
 public class StartController {
 
     private static final Logger logger = LoggerFactory.getLogger(StartController.class);
+
     private static int index = 0;
 
-
-    private OBDRunParameter obdRunParameter;
-//
-    @Autowired
-    public void setObdRunParameter(OBDRunParameter obdRunParameter) {
-        this.obdRunParameter = obdRunParameter;
-    }
-
-    @RequestMapping(name = "/start",method = RequestMethod.GET)
-    public Object start(){
+    @RequestMapping(value = "/startObd",method = RequestMethod.GET)
+    public Result startObd(){
         boolean isRun = ApplicationVariable.getIsRun();
         if (isRun){
-            return "设备已经启动;无法重新启动,请重新初始化再进行启动";
+            return new Result(false,"设备已经启动;无法重新启动,请重新初始化再进行启动");
+        }
+        if (!ApplicationVariable.getStartTheReady()){
+            return  new Result(false,"初始化失败;请仔细检查参数");
         }
         List<String> obdCodes = StrUtils.splitSeparate(ApplicationVariable.getObdCodes(), ",");
         index = 0;
@@ -46,12 +41,13 @@ public class StartController {
                 logger.error("codes:"+code+";启动失败");
             }
         }
-        return "成功启动了"+index+ "个模拟设备;";
+        return  new Result(true,"成功启动了"+index+ "个模拟设备;");
     }
 
-//    @RequestMapping(name = "/parameterInit",method = RequestMethod.GET)
-//    public Object parameter(){
-//        obdRunParameter.init();
-//        return "正在进行参数初始化";
-//    }
+
+    @RequestMapping(value = "/initParameter",method = RequestMethod.GET)
+    public Result initParameter(){
+        new OBDRunParameter().init();
+        return  new Result(false,"正在进行参数初始化");
+    }
 }

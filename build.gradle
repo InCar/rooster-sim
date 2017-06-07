@@ -45,6 +45,17 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
+task initPm(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.incar.gradleTask.RootInitParament'
+}
+
+task startObd(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.incar.gradleTask.RootStartObd'
+}
+
+
 compileJava{
     options.encoding = "utf-8"
     options.compilerArgs << "-Xlint:unchecked"
