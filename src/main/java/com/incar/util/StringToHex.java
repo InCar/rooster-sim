@@ -1,7 +1,5 @@
 package com.incar.util;
 
-import java.nio.ByteBuffer;
-
 /**
  * Created by zhouyongbo on 2017/6/2.
  * 将16进制的字符串 转为Byte数组

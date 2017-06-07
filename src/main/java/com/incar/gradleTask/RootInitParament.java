@@ -1,7 +1,5 @@
 package com.incar.gradleTask;
 
-import com.incar.util.URLUtils;
-import com.incar.util.YamlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
