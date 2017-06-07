@@ -1,13 +1,8 @@
 package com.incar;
 
-import com.incar.TCP.TcpClient;
-import com.incar.util.StrUtils;
-import com.incar.util.StringToHex;
-import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by zhouyongbo on 2017/5/31.
@@ -16,7 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //@SpringBootTest(classes = Application.class)
 public class OBDTest {
 
-    private static final Logger logger = Logger.getLogger(OBDTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(OBDTest.class);
 //    @Autowired
 //    OBDRepository obdRepository;
 

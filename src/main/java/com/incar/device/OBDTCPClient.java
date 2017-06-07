@@ -1,26 +1,22 @@
 package com.incar.device;
 
-import com.incar.TCP.TcpClient;
 import com.incar.util.ApplicationVariable;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannelConfig;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.Map;
 
 /**
  * Created by zhouyongbo on 2017/6/2.
  */
 public abstract class OBDTCPClient implements Runnable{
-    private static final Logger logger = Logger.getLogger(OBDTCPClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(OBDTCPClient.class);
 
     private  Bootstrap bootstrap ;
     private  Channel channel ;
@@ -93,7 +89,7 @@ public abstract class OBDTCPClient implements Runnable{
         Channel channel = null;
         try {
             channel = initBootstrap().connect(ApplicationVariable.getObjectiveIP(), ApplicationVariable.getObjectivePort()).sync().channel();
-           port= ((InetSocketAddress) channel.localAddress()).getPort();
+            port= ((InetSocketAddress) channel.localAddress()).getPort();
         } catch (Exception e) {
             logger.error(String.format("连接Server(IP[%s],PORT[%s])失败", ApplicationVariable.getObjectiveIP(),ApplicationVariable.getObjectivePort()),e);
             return null;
@@ -126,7 +122,7 @@ public abstract class OBDTCPClient implements Runnable{
     }
 
     public void run() {
-            execute();
+        execute();
     }
 
 
@@ -139,9 +135,9 @@ public abstract class OBDTCPClient implements Runnable{
         if (bootstrap == null ){
             bootstrap = initBootstrap();
         }
-       if (channel == null ){
-           channel = initChannel();
-       }
+        if (channel == null ){
+            channel = initChannel();
+        }
         if (bootstrap == null || channel == null ){
             logger.info("TCP4连接初始化失败");
             isNormal = false;

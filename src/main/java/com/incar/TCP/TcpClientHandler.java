@@ -3,13 +3,14 @@ package com.incar.TCP;
 import com.incar.util.OBDRunParameter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by zhouyongbo on 2017/5/31.
  */
 public class TcpClientHandler extends SimpleChannelInboundHandler<Object> {
-    private static final Logger logger = Logger.getLogger(TcpClientHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(TcpClientHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg)

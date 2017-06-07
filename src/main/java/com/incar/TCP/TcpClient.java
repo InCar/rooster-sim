@@ -2,19 +2,14 @@ package com.incar.TCP;
 
 
 import com.incar.util.ApplicationVariable;
-import com.incar.util.StringToHex;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.CharsetUtil;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
@@ -23,7 +18,7 @@ import java.net.InetSocketAddress;
  * Created by zhouyongbo on 2017/5/31.
  */
 public class TcpClient {
-    private static final Logger logger = Logger.getLogger(TcpClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(TcpClient.class);
 
     public static Bootstrap bootstrap = null;
     public static Channel channel = null;
@@ -103,10 +98,10 @@ public class TcpClient {
         bootstrap = getBootstrap();
         channel = getChannel();
         if (bootstrap == null || channel == null ){
-            logger.info("TCP4连接初始化失败");
+            logger.info("TCP连接初始化失败MM");
             ApplicationVariable.setStartTheReady(false);
         }else {
-            logger.info("TCP4连接初始化成功");
+            logger.info("TCP连接初始化成功MM");
         }
     }
 }

@@ -4,7 +4,8 @@ package com.incar.device;
 import com.incar.TCP.TcpClient;
 import com.incar.util.ApplicationVariable;
 import com.incar.util.StringToHex;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class DevicePool extends OBDTCPClient {
 
-    private static final Logger logger = Logger.getLogger(DevicePool.class);
+    private static final Logger logger = LoggerFactory.getLogger(DevicePool.class);
 
     /**
      * 已发送信息
@@ -168,7 +169,7 @@ public class DevicePool extends OBDTCPClient {
                 if (msg!=null){
                     try{
                         if (time >0){Thread.sleep(time*1000);}
-                            logger.info("code:"+deviceCode+";port:"+getPort()+";正在发送数据");
+                        logger.info("code:"+deviceCode+";port:"+getPort()+";正在发送数据");
 //                    logger.info("code:"+deviceCode+";正在发送数据");
                         if (isShareTCP){
                             TcpClient.sendMsg(msg);

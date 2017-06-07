@@ -5,7 +5,8 @@ import com.incar.entity.Result;
 import com.incar.util.ApplicationVariable;
 import com.incar.util.OBDRunParameter;
 import com.incar.util.StrUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 //@RequestMapping("/api")
 public class ObdController {
 
-    private static final Logger logger = Logger.getLogger(ObdController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ObdController.class);
 
     private static int index = 0;
 

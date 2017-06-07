@@ -3,8 +3,8 @@ package com.incar.util;
 import com.incar.TCP.TcpClient;
 import com.incar.gradleTask.TaskUtil;
 import com.incar.repository.OBDRepository;
-import com.sun.glass.ui.Application;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Component
 public class OBDRunParameter implements EnvironmentAware {
-    private static final Logger logger = Logger.getLogger(OBDRunParameter.class);
+    private static final Logger logger = LoggerFactory.getLogger(OBDRunParameter.class);
 
     private static OBDRepository obdRepository;
 
@@ -71,7 +71,7 @@ public class OBDRunParameter implements EnvironmentAware {
      * 初始化模拟设备 当没有可用的模拟设备时候 则不会像目标地址发送东西
      */
     private void initOBDCodes(){
-        logger.info("初始化模拟设备");
+        logger.info("初始化模拟设备MM");
         //设置模拟设备
         String obdCodes = ApplicationVariable.getObdCodes();
         String sign = obdCodes;
@@ -84,7 +84,7 @@ public class OBDRunParameter implements EnvironmentAware {
             logger.info("没有可用设备");
         }else {
             ApplicationVariable.setObdCodes(join);
-            logger.info("模拟设备初始化完成");
+            logger.info("模拟设备初始化完成MM");
         }
         initDate();
         otherParameter();
