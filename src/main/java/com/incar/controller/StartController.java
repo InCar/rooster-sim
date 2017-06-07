@@ -16,7 +16,7 @@ import java.util.List;
  */
 @RestController
 //@RequestMapping("/api")
-public class ObdController {
+public class StartController {
 
     private static final Logger logger = LoggerFactory.getLogger(ObdController.class);
 
