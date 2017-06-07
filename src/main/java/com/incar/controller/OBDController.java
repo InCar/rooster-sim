@@ -21,7 +21,7 @@ public class ObdController {
 
     private static int index = 0;
 
-    @RequestMapping(name = "/startObd")
+    @RequestMapping(value = "/startObd",method = RequestMethod.GET)
     public Result startObd(){
         boolean isRun = ApplicationVariable.getIsRun();
         if (isRun){
@@ -44,9 +44,9 @@ public class ObdController {
     }
 
 
-//    @RequestMapping(name = "/initParameter",method = RequestMethod.GET)
-//    public Result initParameter(){
-//        new OBDRunParameter().init();
-//        return  new Result(false,"正在进行参数初始化");
-//    }
+    @RequestMapping(value = "/initParameter",method = RequestMethod.GET)
+    public Result initParameter(){
+        new OBDRunParameter().init();
+        return  new Result(false,"正在进行参数初始化");
+    }
 }
