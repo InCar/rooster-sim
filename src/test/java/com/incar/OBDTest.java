@@ -1,8 +1,7 @@
 package com.incar;
 
+import org.jboss.logging.Logger;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by zhouyongbo on 2017/5/31.
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory;
 //@SpringBootTest(classes = Application.class)
 public class OBDTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(OBDTest.class);
+    private static final Logger logger = Logger.getLogger(OBDTest.class);
 //    @Autowired
 //    OBDRepository obdRepository;
 
