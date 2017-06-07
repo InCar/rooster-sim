@@ -142,6 +142,7 @@ public class DevicePool extends OBDTCPClient {
             new Thread(this).start();
             return 0;
         }else {
+            logger.error("deviceCode:"+deviceCode+";参数校验失败;无法启动该模拟器");
             return 1;
         }
     }

@@ -38,3 +38,6 @@ sim:
   #代表多设备是否共享一个TCP连接 true:共享 false:不共享(每个设备都会有一个自己的TCP连接通道)  默认为false
   isShareTCP: false
 
+  #代表服务启动既发送数据
+  isRunSend: true
+

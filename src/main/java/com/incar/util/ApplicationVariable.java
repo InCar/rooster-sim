@@ -75,6 +75,18 @@ public final class ApplicationVariable {
      */
     private static Integer dataType;
 
+    /**
+     * 项目服务端口号
+     */
+    private static int serverPort;
+
+
+    /**
+     * 服务启动是否即时发包
+     * @return
+     */
+    private static Boolean isRunSend;
+
 
     public static Integer getTime() {
         return time;
@@ -171,4 +183,21 @@ public final class ApplicationVariable {
     public static void setIsRun(boolean isRun) {
         ApplicationVariable.isRun = isRun;
     }
+
+    public static int getServerPort() {
+        return serverPort;
+    }
+
+    public static void setServerPort(int serverPort) {
+        ApplicationVariable.serverPort = serverPort;
+    }
+
+    public static Boolean getIsRunSend() {
+        return isRunSend;
+    }
+
+    public static void setIsRunSend(Boolean isRunSend) {
+        ApplicationVariable.isRunSend = isRunSend;
+    }
+
 }

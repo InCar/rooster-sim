@@ -1,6 +1,7 @@
 package com.incar.util;
 
 import com.incar.TCP.TcpClient;
+import com.incar.gradleTask.TaskUtil;
 import com.incar.repository.OBDRepository;
 import com.sun.glass.ui.Application;
 import org.apache.log4j.Logger;
@@ -25,6 +26,12 @@ public class OBDRunParameter implements EnvironmentAware {
     private static boolean initParent = false;
 
     public OBDRunParameter() {
+    }
+
+    public void init(){
+        //校验 启动参数
+        logger.info("启动参数校验");
+        initTCP();
     }
 
     public void init(OBDRepository obdRepository){
@@ -81,6 +88,9 @@ public class OBDRunParameter implements EnvironmentAware {
         }
         initDate();
         otherParameter();
+        if (ApplicationVariable.getIsRunSend()){
+            TaskUtil.RootStartObd();
+        }
     }
 
     private void initDate(){
@@ -161,6 +171,11 @@ public class OBDRunParameter implements EnvironmentAware {
         ApplicationVariable.setIsRun(false);
         ApplicationVariable.setStartTheReady(true);
 
+        Boolean isRunSend = ApplicationVariable.getIsRunSend();
+        if (isRunSend == null){
+            ApplicationVariable.setIsRunSend(true);
+        }
+
     }
 
     @Override
@@ -178,6 +193,8 @@ public class OBDRunParameter implements EnvironmentAware {
          String isShareTCP = environment.getProperty("sim.isShareTCP");
          String startTime = environment.getProperty("sim.startTime");
          String endTime =  environment.getProperty("sim.endTime");
+        String serverPort =  environment.getProperty("server.port");
+        String isRunSend = environment.getProperty("sim.isRunSend");
         try{
             ApplicationVariable.setDays(Integer.valueOf(days));
             ApplicationVariable.setObdCodes(obdCodes);
@@ -188,6 +205,8 @@ public class OBDRunParameter implements EnvironmentAware {
             ApplicationVariable.setIsShareTCP(Boolean.valueOf(isShareTCP));
             ApplicationVariable.setStartTime(DateUtils.parseStrToDate(startTime));
             ApplicationVariable.setEndTime(DateUtils.parseStrToDate(endTime));
+            ApplicationVariable.setServerPort(Integer.parseInt(serverPort));
+            ApplicationVariable.setIsRunSend(Boolean.valueOf(isRunSend));
         }catch (Exception e){
 
         }
