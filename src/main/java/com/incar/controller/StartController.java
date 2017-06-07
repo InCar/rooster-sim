@@ -18,7 +18,7 @@ import java.util.List;
 //@RequestMapping("/api")
 public class StartController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ObdController.class);
+    private static final Logger logger = LoggerFactory.getLogger(StartController.class);
 
     private static int index = 0;
 
