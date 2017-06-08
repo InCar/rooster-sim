@@ -197,18 +197,41 @@ public class OBDRunParameter implements EnvironmentAware {
         String isRunSend = environment.getProperty("sim.isRunSend");
         try{
             ApplicationVariable.setDays(Integer.valueOf(days));
-            ApplicationVariable.setObdCodes(obdCodes);
+        }catch (Exception e){}
+        ApplicationVariable.setObdCodes(obdCodes);
+        try{
             ApplicationVariable.setTime(Integer.valueOf(time));
-            ApplicationVariable.setObjectiveIP(objectiveIP);
-            ApplicationVariable.setObjectivePort(Integer.valueOf(objectivePort));
-            ApplicationVariable.setCirculationNum(Integer.valueOf(circulationNum));
-            ApplicationVariable.setIsShareTCP(Boolean.valueOf(isShareTCP));
-            ApplicationVariable.setStartTime(DateUtils.parseStrToDate(startTime));
-            ApplicationVariable.setEndTime(DateUtils.parseStrToDate(endTime));
-            ApplicationVariable.setServerPort(Integer.parseInt(serverPort));
-            ApplicationVariable.setIsRunSend(Boolean.valueOf(isRunSend));
         }catch (Exception e){
 
         }
+        ApplicationVariable.setObjectiveIP(objectiveIP);
+
+        try{
+            ApplicationVariable.setObjectivePort(Integer.valueOf(objectivePort));
+        }catch (Exception e){}
+
+        try{
+            ApplicationVariable.setCirculationNum(Integer.valueOf(circulationNum));
+        }catch (Exception e){}
+
+        try{
+            ApplicationVariable.setIsShareTCP(Boolean.valueOf(isShareTCP));
+        }catch (Exception e){}
+
+        try{
+            ApplicationVariable.setStartTime(DateUtils.parseStrToDate(startTime));
+        }catch (Exception e){}
+
+        try{
+            ApplicationVariable.setEndTime(DateUtils.parseStrToDate(endTime));
+        }catch (Exception e){}
+
+        try{
+            ApplicationVariable.setServerPort(Integer.parseInt(serverPort));
+        }catch (Exception e){}
+
+        try{
+            ApplicationVariable.setIsRunSend(Boolean.valueOf(isRunSend));
+        }catch (Exception e){}
     }
 }
