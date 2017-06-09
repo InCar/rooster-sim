@@ -13,8 +13,6 @@ public class RootStartObd {
     private static final Logger logger = LoggerFactory.getLogger(RootStartObd.class);
 
     public static void main(String[] args) {
-        String url = "http://localhost:" + YamlUtils.getServerPort() + "/startObd";
-        String s = URLUtils.sendGet(url, null);
-        logger.info(s);
+        TaskUtil.RootStartObd();
     }
 }

@@ -1,8 +1,5 @@
 package com.incar.util;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.util.Date;
 
 /**
@@ -63,10 +60,7 @@ public final class ApplicationVariable {
     private static Date endTime;
 
 
-    /**
-     *是否已经启动
-     */
-    private static boolean isRun;
+
 
 
     /**
@@ -176,13 +170,6 @@ public final class ApplicationVariable {
         ApplicationVariable.dataType = dataType;
     }
 
-    public static boolean getIsRun() {
-        return isRun;
-    }
-
-    public static void setIsRun(boolean isRun) {
-        ApplicationVariable.isRun = isRun;
-    }
 
     public static int getServerPort() {
         return serverPort;

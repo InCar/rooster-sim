@@ -16,4 +16,10 @@ public class TaskUtil {
         String s = URLUtils.sendGet(url, null);
         logger.info(s);
     }
+
+    public static void initParament(){
+        String url = "http://localhost:" + YamlUtils.getServerPort() + "/initParameter";
+        String s = URLUtils.sendGet(url, null);
+        logger.info(s);
+    }
 }

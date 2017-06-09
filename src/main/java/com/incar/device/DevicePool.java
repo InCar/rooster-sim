@@ -104,8 +104,8 @@ public class DevicePool extends OBDTCPClient {
                 if (sentInfo != null && sentInfo.size() >0){
                     dataInfo = sentInfo;
                     sentInfo = new ArrayList<String>();
-                    index ++;
                     logger.info("deviceCode:"+deviceCode+";数据已发送"+index+"次;");
+                    index ++;
                     return dataInfo.get(0);
                 }else {
                     logger.info("deviceCode:"+deviceCode+";出现数据错误;已停止发送");
@@ -113,7 +113,10 @@ public class DevicePool extends OBDTCPClient {
                     return null;
                 }
             }else if (index == circulationNum){
+                logger.info("deviceCode:"+deviceCode+";数据已发送"+index+"次;");
                 logger.info("deviceCode:"+deviceCode+";数据发送完毕;");
+                dataInfo = sentInfo;
+                sentInfo = new ArrayList<String>();
                 isSend = false;
                 return null;
             }else {
@@ -195,6 +198,15 @@ public class DevicePool extends OBDTCPClient {
                             e1.printStackTrace();
                         }
 
+                    }
+                }
+            }else {
+                //当数据运行完毕之后 进入无期限等待 指令来激活数据的重新发送
+                synchronized (this){
+                    try {
+                        this.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             }
