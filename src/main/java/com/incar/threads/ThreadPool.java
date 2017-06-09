@@ -14,7 +14,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ThreadPool {
 
     private static final Logger logger = LoggerFactory.getLogger(ThreadPool.class);
-    private final static ExecutorService  scheduledThreadPool = Executors.newCachedThreadPool(Executors.defaultThreadFactory());
+
+    private final static ExecutorService  scheduledThreadPool = Executors.newCachedThreadPool();
 
     public static void scheduledThreadPool(DevicePool devicePool) {
         scheduledThreadPool.execute(devicePool);
