@@ -1,5 +1,6 @@
 package com.incar.device;
 
+import com.incar.threads.ThreadPool;
 import com.incar.util.ApplicationVariable;
 import com.incar.util.StrUtils;
 import org.slf4j.Logger;
@@ -38,11 +39,13 @@ public class DataManage {
 
     public static int start(){
         if (devicePools == null ){
+            ThreadPool.poolInfo();
             devicePools = new ArrayList<DevicePool>();
             List<String> obdCodes = StrUtils.splitSeparate(ApplicationVariable.getObdCodes(), ",");
             for (String code:obdCodes){
                 DevicePool devicePool = new DevicePool(null, code);
                 devicePools.add(devicePool);
+                devicePool.start();
                 int start = devicePool.start();
                 if (start == 0){
                     index ++;
@@ -50,6 +53,19 @@ public class DataManage {
                     logger.error("codes:"+code+";启动失败");
                 }
             }
+
+//            devicePools = new ArrayList<DevicePool>();
+//            List<String> obdCodes = StrUtils.splitSeparate(ApplicationVariable.getObdCodes(), ",");
+//            for (String code:obdCodes){
+//                DevicePool devicePool = new DevicePool(null, code);
+//                devicePools.add(devicePool);
+//                int start = devicePool.start();
+//                if (start == 0){
+//                    index ++;
+//                }else {
+//                    logger.error("codes:"+code+";启动失败");
+//                }
+//            }
         }else {
             continueRun();
         }
@@ -62,9 +78,7 @@ public class DataManage {
             if (!devicePool.isSend()){
                 devicePool.setIndex(1);
                 devicePool.setSend(true);
-                synchronized (devicePool){
-                    devicePool.notify();
-                }
+                devicePool.start();
             }
         }
     }

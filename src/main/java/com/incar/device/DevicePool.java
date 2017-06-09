@@ -2,6 +2,7 @@ package com.incar.device;
 
 
 import com.incar.TCP.TcpClient;
+import com.incar.threads.ThreadPool;
 import com.incar.util.ApplicationVariable;
 import com.incar.util.StringToHex;
 import org.slf4j.Logger;
@@ -14,9 +15,14 @@ import java.util.List;
  * Created by zhouyongbo on 2017/6/2.
  * 设备池
  */
-public class DevicePool extends OBDTCPClient {
+public class DevicePool implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(DevicePool.class);
+
+    /**
+     * 发送器
+     */
+    private OBDTCPClient obdtcpClient;
 
     /**
      * 已发送信息
@@ -85,11 +91,13 @@ public class DevicePool extends OBDTCPClient {
             return;
         }
         if (getSentInfo()==null) setSentInfo(new ArrayList<String>());
+
         if (!isShareTCP){
-            tcpInit();
+            obdtcpClient = new OBDTCPClient();
+            obdtcpClient.tcpInit();
         }else {
-            setNormal(ApplicationVariable.getStartTheReady());
-            setPort(TcpClient.port);
+            obdtcpClient.setNormal(ApplicationVariable.getStartTheReady());
+            obdtcpClient.setPort(TcpClient.port);
         }
 
     }
@@ -142,8 +150,8 @@ public class DevicePool extends OBDTCPClient {
      * 1:启动失败
      */
     public int start(){
-        if (isNormal()){
-            new Thread(this).start();
+        if ( isSend && obdtcpClient.isNormal()){
+            ThreadPool.scheduledThreadPool(this);
             return 0;
         }else {
             logger.error("deviceCode:"+deviceCode+";参数校验失败;无法启动该模拟器");
@@ -162,22 +170,29 @@ public class DevicePool extends OBDTCPClient {
         return byteBuffer;
     }
 
-    public void execute() {
-        logger.info(deviceCode+":启动发送数据");
+
+    @Override
+    public void run() {
+        execute();
+    }
+
+    public synchronized void execute() {
+        if (isSend){
+            logger.info(deviceCode+":启动发送数据");
+            Thread thread = Thread.currentThread();
+            logger.info("线程名称:"+ thread.getName()+ ";线程ID:"+thread.getId());
+        }
         int retriesNumber = 0;
-        while (true){
-            if (isSend){
+        while (isSend){
                 Object msg = getMsg();
-//                logger.info(deviceCode+":正在发送数据");
                 if (msg!=null){
                     try{
                         if (time >0){Thread.sleep(time*1000);}
-                        logger.info("code:"+deviceCode+";port:"+getPort()+";正在发送数据");
-//                    logger.info("code:"+deviceCode+";正在发送数据");
+//                        logger.info("code:"+deviceCode+";port:"+obdtcpClient.getPort()+";正在发送数据");
                         if (isShareTCP){
                             TcpClient.sendMsg(msg);
                         }else {
-                            sendMsg(msg);
+                            obdtcpClient.sendMsg(msg);
                         }
                         retriesNumber = 0;
                         transferData(); // 如果与主机断开连接等异常 则重发
@@ -200,20 +215,9 @@ public class DevicePool extends OBDTCPClient {
 
                     }
                 }
-            }else {
-                //当数据运行完毕之后 进入无期限等待 指令来激活数据的重新发送
-                synchronized (this){
-                    try {
-                        this.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
 
         }
     }
-
 
     public String getDeviceName() {
         return deviceName;
@@ -262,5 +266,14 @@ public class DevicePool extends OBDTCPClient {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+
+    public OBDTCPClient getObdtcpClient() {
+        return obdtcpClient;
+    }
+
+    public void setObdtcpClient(OBDTCPClient obdtcpClient) {
+        this.obdtcpClient = obdtcpClient;
     }
 }
