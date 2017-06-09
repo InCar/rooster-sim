@@ -15,7 +15,7 @@ import java.net.InetSocketAddress;
 /**
  * Created by zhouyongbo on 2017/6/2.
  */
-public abstract class OBDTCPClient implements Runnable{
+public class OBDTCPClient{
     private static final Logger logger = LoggerFactory.getLogger(OBDTCPClient.class);
 
     private  Bootstrap bootstrap ;
@@ -120,17 +120,6 @@ public abstract class OBDTCPClient implements Runnable{
             return 0;
         }
     }
-
-    public void run() {
-        execute();
-    }
-
-
-    /**
-     * 获取执行数据
-     */
-    public abstract void execute();
-
     protected void tcpInit(){
         if (bootstrap == null ){
             bootstrap = initBootstrap();
