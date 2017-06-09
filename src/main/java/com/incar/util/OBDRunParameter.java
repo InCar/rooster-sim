@@ -168,7 +168,6 @@ public class OBDRunParameter implements EnvironmentAware {
             logger.info("TCP连接方式设置完成");
         }
 
-        ApplicationVariable.setIsRun(false);
         ApplicationVariable.setStartTheReady(true);
 
         Boolean isRunSend = ApplicationVariable.getIsRunSend();

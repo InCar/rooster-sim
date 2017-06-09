@@ -11,6 +11,6 @@ public class RootInitParament {
     private static final Logger logger = LoggerFactory.getLogger(RootInitParament.class);
 
     public static void main(String[] args) {
-        TaskUtil.RootStartObd();
+        TaskUtil.initParament();
     }
 }
