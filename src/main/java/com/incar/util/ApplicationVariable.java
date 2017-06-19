@@ -12,7 +12,7 @@ public final class ApplicationVariable {
     /**
      * 参数是否校验通过
      */
-    private static Boolean startTheReady;
+    private static Boolean startTheReady = false;
 
     /**
      * 间隔时间
