@@ -1,10 +1,13 @@
 package com.incar.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -12,6 +15,7 @@ import java.util.List;
  * Created by zhouyongbo on 2017/6/7.
  */
 public class YamlAnalyz {
+     Logger logger = LoggerFactory.getLogger(YamlAnalyz.class);
     /**
      * 文件名称
      */
@@ -36,11 +40,12 @@ public class YamlAnalyz {
         this.fileName = fileName;
         this.runClass = runClass;
         yaml = new Yaml();
-        try {
-            documentMap = (LinkedHashMap<String, Object>) yaml.load(new FileInputStream(new File(getPath())));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        //            documentMap = (LinkedHashMap<String, Object>) yaml.load(new FileInputStream(new File(getPath())));
+        documentMap = (LinkedHashMap<String, Object>) yaml.load(getInputStream());
+    }
+
+    private InputStream getInputStream(){
+        return runClass.getClassLoader().getResourceAsStream(fileName);
     }
 
     /**
@@ -48,6 +53,9 @@ public class YamlAnalyz {
      * @return
      */
     private String getPath(){
+
+//        String path = runClass.getClassLoader().getResource(fileName).getPath();
+//        logger.info("路径为:"+path);
         return runClass.getClassLoader().getResource(fileName).getPath();
     }
 
