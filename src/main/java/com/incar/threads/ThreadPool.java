@@ -27,8 +27,8 @@ public class ThreadPool {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                ThreadPoolExecutor scheduledThreadPool = (ThreadPoolExecutor) ThreadPool.scheduledThreadPool;
                 while (true){
-                    ThreadPoolExecutor scheduledThreadPool = (ThreadPoolExecutor) ThreadPool.scheduledThreadPool;
                     try {
                         Thread.sleep(6000);
                     } catch (InterruptedException e) {
