@@ -1,4 +1,4 @@
-package com.incar.entity;
+package com.incar.sim.entity;
 
 
 import javax.persistence.*;
@@ -8,7 +8,6 @@ import java.util.Date;
  * Created by zhouyongbo on 2017/5/31.
  * OBD历史数据
  */
-@Entity
 @Table(name = "t_obd_history")
 public class ObdHistory {
     @Id

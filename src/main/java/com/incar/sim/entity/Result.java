@@ -1,4 +1,4 @@
-package com.incar.entity;
+package com.incar.sim.entity;
 
 /**
  * Created by zhouyongbo on 2017/6/7.

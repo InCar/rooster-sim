@@ -9,6 +9,7 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.2.RELEASE")
     }
 }
+
 repositories {
     if (project.hasProperty("maven")) {
         if (maven.equals("maven.aliyun.com"))
@@ -19,41 +20,31 @@ repositories {
         mavenCentral()
     }
 }
-apply plugin: 'java'
-apply plugin: 'idea'
+
 apply plugin: 'org.springframework.boot'
 
-jar {
-    baseName = 'simulator'
-    version =  '1.0'
-}
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web"){
-        exclude module: "spring-boot-starter-logging"
-    }
-    compile("org.springframework.boot:spring-boot-starter-data-jpa"){
+    compile("org.springframework.boot:spring-boot-starter:1.5.+"){
         exclude module: "spring-boot-starter-logging"
     }
     compile("org.springframework.boot:spring-boot-starter-log4j2:1.5.+")
+    compile("org.springframework:spring-jdbc:4.3.7.RELEASE")
+
+    compile("commons-lang:commons-lang:2.6")
     compile("io.netty:netty-all:4.1.11.Final")
-    runtime("mysql:mysql-connector-java:5.+")
-    testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile("mysql:mysql-connector-java:5.+")
+    compile("org.eclipse.persistence:javax.persistence:2.1.0")
+
+    testCompile("org.springframework.boot:spring-boot-starter-test:1.5.+")
+
 }
 
-task initPm(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'com.incar.gradleTask.RootInitParament'
-}
 
-task startObd(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'com.incar.gradleTask.RootStartObd'
-}
 
 
 compileJava{
