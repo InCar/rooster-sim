@@ -8,20 +8,36 @@ package com.incar.sim.net;/**
  * @date 2017/8/9 10:34
  */
 public interface NetClient {
+
+    /**
+     * 启动
+     */
+    public void start();
+
+    /**
+     * 关闭
+     */
+    public void close();
+
+
     /**
      * 连接服务端
-     *
-     * @param addr
-     * @param port
      */
-    void connect(String addr,int port);
+    void reConnect();
 
     /**
      * 发送数据包
      *
-     * @param pack
+     * @param pack 数据
+     *
+     * @return  true 发送成功，false  发送失败
      */
-    void sendPack(byte[] pack);
+    boolean sendPack(byte[] pack);
 
-
+    /**
+     * 客户端是否已连接
+     *
+     * @return
+     */
+    boolean isActive();
 }

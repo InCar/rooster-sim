@@ -6,13 +6,19 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.EventLoop;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+/**
+ *
+ * 处理channelInactive事件的handler，channelInactive事件发生后重新连接
+ */
 @Sharable
 public class ReConnectHandler extends ChannelInboundHandlerAdapter{
+	private static final Logger logger = LogManager.getLogger(ReConnectHandler.class);
+	private Netty4Client client;
 	
-	private Netty4ReconnectClient client;
-	
-	public ReConnectHandler(Netty4ReconnectClient reConnectClient) {
+	public ReConnectHandler(Netty4Client reConnectClient) {
 		if (null == reConnectClient) {
 			throw new IllegalArgumentException();
 		}
@@ -27,7 +33,7 @@ public class ReConnectHandler extends ChannelInboundHandlerAdapter{
 
 			@Override
 			public void run() {
-				client.reStart();
+				client.reConnect();
 			}
 
 		}, 1L, TimeUnit.SECONDS);

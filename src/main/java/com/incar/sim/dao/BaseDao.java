@@ -626,6 +626,7 @@ public abstract class BaseDao extends JdbcDaoSupport {
 
 		paramList.add((pageNo - 1) * pageSize);
 		paramList.add(pageSize);
+		@SuppressWarnings("unchecked")
 		List<?> list = getJdbcTemplate().query("select * from (" + selectRecordSql + ") t999999999 limit ?,?",
 				 paramList.toArray(),new EntityMapper(entityClass));
 		pageVo.setList(list);

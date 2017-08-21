@@ -6,10 +6,13 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoop;
 
+/**
+ * 监听连接是否成功的监听器。不成功则重连
+ */
 public class ReconnectListener implements ChannelFutureListener {
-	private Netty4ReconnectClient client;
+	private Netty4Client client;
 
-	public ReconnectListener(Netty4ReconnectClient reConnectClient) {
+	public ReconnectListener(Netty4Client reConnectClient) {
 		if (null == reConnectClient) {
 			throw new IllegalArgumentException();
 		}
@@ -26,7 +29,7 @@ public class ReconnectListener implements ChannelFutureListener {
 			loop.schedule(new Runnable() {
 				@Override
 				public void run() {
-					client.reStart();
+					client.reConnect();
 				}
 
 			}, 1L, TimeUnit.SECONDS);

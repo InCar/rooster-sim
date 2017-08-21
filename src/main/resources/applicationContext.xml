@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+	default-autowire="byName">
+	
+	<bean id="baseDataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource"
+		abstract="true">
+		<!--<property name="maximumActiveTime">
+			<value>${mysql.jdbc.maximum-active-time}</value>
+		</property>
+		<property name="maximumConnectionCount">
+			<value>${mysql.jdbc.maximum-connection-count}</value>
+		</property>
+		<property name="minimumConnectionCount">
+			<value>${mysql.jdbc.minimum-connection-count}</value>
+		</property>
+		<property name="prototypeCount">
+			<value>${mysql.jdbc.prototype-count}</value>
+		</property>
+		<property name="trace">
+			<value>${mysql.jdbc.trace}</value>
+		</property>
+		<property name="statisticsLogLevel">
+			<value>${mysql.jdbc.statistics-log-level}</value>
+		</property>-->
+		<property name="houseKeepingTestSql">
+			<value>select 1 from dual</value>
+		</property>
+	</bean>
+
+	<bean id="dataSource" parent="baseDataSource">
+		<property name="driver">
+			<value>${spring.datasource.driver-class-name}</value>
+		</property>
+		<property name="driverUrl">
+			<value>${spring.datasource.url}</value>
+		</property>
+		<property name="user">
+			<value>${spring.datasource.username}</value>
+		</property>
+		<property name="password">
+			<value>${spring.datasource.password}</value>
+		</property>
+	</bean>
+
+	<!-- JdbcTemplate使用动态数据源的配置 -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+ 
+</beans>
